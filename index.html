@@ -214,11 +214,11 @@
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 4px;
+            gap: 4px; /* Increased gap for breathing space */
         }
         
         .calendar-day-card {
-            min-height: 100px;
+            min-height: 100px; /* Bigger boxes */
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
@@ -252,7 +252,7 @@
             z-index: 50;
             pointer-events: none;
             opacity: 0;
-            transition: opacity 0s;
+            transition: opacity 0s; /* Immediate */
             border: 1px solid rgba(255,255,255,0.1);
             margin-bottom: 5px;
         }
@@ -302,10 +302,10 @@
     <div id="undo-toast" class="fixed bottom-28 left-1/2 transform -translate-x-1/2 glass-card text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-4 z-50 transition-all duration-300 translate-y-20 opacity-0 border-white/10">
         <span class="text-sm font-medium">Task deleted</span>
         <button onclick="window.undoDelete()" class="text-purple-400 hover:text-purple-300 font-bold text-sm uppercase tracking-wider">Undo</button>
-        <button onclick="window.closeUndoToast()" class="text-gray-400 hover:text-white ml-2 transition-colors"><i class="fas fa-times"></i></button>
+        <button onclick="closeUndoToast()" class="text-gray-400 hover:text-white ml-2 transition-colors"><i class="fas fa-times"></i></button>
     </div>
 
-    <!-- General Notification Toast -->
+    <!-- General Notification Toast (For Copy etc) -->
     <div id="notification-toast" class="fixed bottom-10 left-1/2 transform -translate-x-1/2 glass-card text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-3 z-[70] transition-all duration-300 translate-y-20 opacity-0 border-white/10 pointer-events-none">
         <i class="fas fa-info-circle text-purple-400"></i>
         <span id="notification-message" class="text-sm font-medium">Notification</span>
@@ -396,7 +396,7 @@
         </div>
     </div>
 
-    <!-- Manage Day Modal -->
+    <!-- Manage Day Modal (Calendar Date Click) -->
     <div id="manage-dayoff-modal" class="fixed inset-0 bg-black/60 z-[60] hidden flex items-center justify-center p-4 backdrop-blur-md transition-opacity" onclick="if(event.target===this) closeManageDayoffModal()">
         <div class="glass-card rounded-3xl p-8 w-full max-w-md shadow-2xl transform transition-all scale-100 border border-white/10">
             <h2 class="text-2xl font-display font-semibold text-white mb-6 flex items-center gap-3">
@@ -409,6 +409,7 @@
                 <div id="manage-dayoff-tags" class="flex items-center justify-center gap-2"></div>
                 <p class="text-sm text-gray-400 text-center">Add or remove holiday/weekoff for this date.</p>
                 <div class="space-y-2 mt-8">
+                    <!-- Changed: Removed 'hidden' class logic in JS to allow adding holidays on Weekoffs -->
                     <button id="dayoff-add-holiday-btn" onclick="addDayoffHoliday()" class="w-full px-4 py-3 bg-blue-500/10 hover:bg-blue-500/20 text-blue-300 rounded-xl font-medium transition-colors border border-blue-500/20">Add/Update Holiday</button>
                     <button id="dayoff-delete-holiday-btn" onclick="deleteDayoffHoliday()" class="hidden w-full px-4 py-3 bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 rounded-xl font-medium transition-colors border border-purple-500/20">Remove Holiday</button>
                     <button id="dayoff-delete-weekoff-btn" onclick="deleteDayoffWeekoff()" class="hidden w-full px-4 py-3 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-xl font-medium transition-colors border border-red-500/20">Remove Weekoff</button>
@@ -532,16 +533,16 @@
         <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between gap-8">
             <!-- Brand & Nav -->
             <div class="flex items-center gap-8 shrink-0">
-                <div class="shiny-text" onclick="window.switchView('home')">
+                <div class="shiny-text" onclick="switchView('home')">
                     Shubham Tasks
                 </div>
                 
                 <!-- Navigation Buttons -->
                 <nav class="hidden md:flex items-center bg-white/5 rounded-full p-1 border border-white/5">
-                    <button onclick="window.switchView('home')" id="nav-home" class="px-4 py-1.5 rounded-full text-sm font-medium transition-all text-white bg-purple-500/20 shadow-sm">Home</button>
-                    <button onclick="window.switchView('tasks')" id="nav-tasks" class="px-4 py-1.5 rounded-full text-sm font-medium transition-all text-gray-400 hover:text-white">Tasks</button>
-                    <button onclick="window.switchView('calendar')" id="nav-calendar" class="px-4 py-1.5 rounded-full text-sm font-medium transition-all text-gray-400 hover:text-white">Calendar</button>
-                    <button onclick="window.switchView('leaves')" id="nav-leaves" class="px-4 py-1.5 rounded-full text-sm font-medium transition-all text-gray-400 hover:text-white">Leaves</button>
+                    <button onclick="switchView('home')" id="nav-home" class="px-4 py-1.5 rounded-full text-sm font-medium transition-all text-white bg-purple-500/20 shadow-sm">Home</button>
+                    <button onclick="switchView('tasks')" id="nav-tasks" class="px-4 py-1.5 rounded-full text-sm font-medium transition-all text-gray-400 hover:text-white">Tasks</button>
+                    <button onclick="switchView('calendar')" id="nav-calendar" class="px-4 py-1.5 rounded-full text-sm font-medium transition-all text-gray-400 hover:text-white">Calendar</button>
+                    <button onclick="switchView('leaves')" id="nav-leaves" class="px-4 py-1.5 rounded-full text-sm font-medium transition-all text-gray-400 hover:text-white">Leaves</button>
                 </nav>
 
                 <div id="current-date" class="hidden sm:block text-[10px] font-mono font-medium text-gray-400 bg-white/5 px-2 py-1 rounded border border-white/5"></div>
@@ -843,36 +844,19 @@
         </div>
     </footer>
 
-    <!-- Logic (Firebase + Core System) -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // Your provided Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyDUTdD2XEJ4hCxVM7qtbmrv-X2lLqjwFvQ",
-            authDomain: "work-task-managment.firebaseapp.com",
-            projectId: "work-task-managment",
-            storageBucket: "work-task-managment.firebasestorage.app",
-            messagingSenderId: "860176413823",
-            appId: "1:860176413823:web:69779dd4c565765e887b4a"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        // Global State - INITIALIZED IMMEDIATELY FROM LOCAL STORAGE (Offline-First)
-        let allTasks = JSON.parse(localStorage.getItem('Shubham_tasks_local') || '[]');
-        let customHolidays = JSON.parse(localStorage.getItem('Shubham_holidays') || '[]');
-        let exceptionDates = JSON.parse(localStorage.getItem('Shubham_exceptions') || '[]');
-        let leaveConfig = JSON.parse(localStorage.getItem('Shubham_leave_config') || '{"pl":0, "sl":0, "pl_adj":0, "sl_adj":0}');
-        let allLeaves = JSON.parse(localStorage.getItem('Shubham_leaves') || '[]');
-        let localLastUpdated = parseInt(localStorage.getItem('Shubham_last_updated') || '0');
-        
+    <!-- Logic -->
+    <script>
+        // Global State
+        let allTasks = [];
         let deletedTaskStack = [];
         let excludedSummaryIds = new Set();
+        let customHolidays = JSON.parse(localStorage.getItem('Shubham_holidays') || '[]');
+        let exceptionDates = JSON.parse(localStorage.getItem('Shubham_exceptions') || '[]');
+        
+        let leaveConfig = JSON.parse(localStorage.getItem('Shubham_leave_config') || '{"pl":0, "sl":0, "pl_adj":0, "sl_adj":0}');
+        let allLeaves = JSON.parse(localStorage.getItem('Shubham_leaves') || '[]');
+
+        const STORAGE_KEY = 'Shubham_tasks_local';
         let mainDatepicker, editDatepicker, filterDatepicker, holidayDatepicker, productivityChart, leaveDatepicker;
         let currentChartTimeframe = 'week';
         let undoTimeout;
@@ -880,143 +864,31 @@
         let currentManagingDate = null;
         let currentManagingDayoffDate = null;
         let currentManagingDayoffHasHoliday = false;
-        let isCurrentWeekOff = false; 
+        let isCurrentWeekOff = false;
         let currentManagingLeaveId = null;
         let currentManagingLeaveDate = null;
         let pendingTaskStatusId = null;
 
-        // UI Sync Indicator Logic
-        window.lastSyncError = "Connecting to Firebase...";
-        function setSyncStatus(status, errorMsg = "") {
-            const dot = document.getElementById('sync-dot');
-            const text = document.getElementById('sync-text');
-            if (!dot || !text) return;
-            
-            if (status === 'ok') {
-                dot.className = "w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]";
-                text.innerText = "Cloud Synced";
-                window.lastSyncError = "Successfully connected and synced to Firebase!";
-            } else if (status === 'error') {
-                dot.className = "w-2 h-2 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)]";
-                text.innerText = "Sync Error";
-                window.lastSyncError = "Error: " + errorMsg + "\n\n(Make sure you are using 'Firestore Database' and your Rules allow read/write)";
-            } else if (status === 'syncing') {
-                dot.className = "w-2 h-2 rounded-full bg-yellow-500 animate-pulse";
-                text.innerText = "Syncing...";
-                window.lastSyncError = "Currently syncing data to cloud...";
-            }
-        }
-
-        // Shared global document for all your devices
-        const docRef = doc(db, 'task_manager', 'global_shared_data');
-
-        // Initialize Firebase Auth
-        const initFirebase = async () => {
-            setSyncStatus('syncing');
-            try {
-                await signInAnonymously(auth);
-            } catch (err) {
-                console.error("Firebase Auth Error:", err);
-                setSyncStatus('error', err.message);
-                window.showNotification("Auth Error - Click Sync Status");
-            }
-        };
-        initFirebase();
-
-        // Listen for Auth status & setup Real-time listener
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                // Real-time synchronization
-                onSnapshot(docRef, (snapshot) => {
-                    if (snapshot.exists()) {
-                        const data = snapshot.data();
-                        const cloudTime = data.lastUpdated || 0;
-                        
-                        // TIMESTAMP COMPARISON: Only overwrite local data if the cloud is ACTUALLY newer, 
-                        // or if this is a brand new device syncing for the first time.
-                        if (cloudTime > localLastUpdated || (localLastUpdated === 0 && cloudTime > 0)) {
-                            allTasks = data.tasks || [];
-                            customHolidays = data.holidays || [];
-                            exceptionDates = data.exceptions || [];
-                            allLeaves = data.leaves || [];
-                            leaveConfig = data.leaveConfig || {pl:0, sl:0, pl_adj:0, sl_adj:0};
-
-                            // Update Local Storage & Sync Times
-                            localLastUpdated = cloudTime;
-                            localStorage.setItem('Shubham_last_updated', localLastUpdated.toString());
-                            localStorage.setItem('Shubham_tasks_local', JSON.stringify(allTasks));
-                            localStorage.setItem('Shubham_holidays', JSON.stringify(customHolidays));
-                            localStorage.setItem('Shubham_exceptions', JSON.stringify(exceptionDates));
-                            localStorage.setItem('Shubham_leaves', JSON.stringify(allLeaves));
-                            localStorage.setItem('Shubham_leave_config', JSON.stringify(leaveConfig));
-                        } else if (localLastUpdated > cloudTime) {
-                            // Our local data is newer (maybe we saved while offline). Push to cloud.
-                            window.syncDataToFirebase();
-                            return; // `syncDataToFirebase` will trigger UI updates
-                        }
-                    } else {
-                        // DB is COMPLETELY empty. Push our local data if we have any to initialize it.
-                        if (localLastUpdated > 0 || allTasks.length > 0) {
-                            window.syncDataToFirebase();
-                        }
-                    }
-
-                    setSyncStatus('ok');
-
-                    // Refresh UI with synced data
-                    window.updateFilterOptions();
-                    window.refreshCurrentView();
-                    window.renderDailySummary();
-                    window.renderProductivityChart();
-                    window.renderMiniCalendar();
-                    window.updateFooterStats();
-
-                    document.getElementById('quota-pl').value = leaveConfig.pl;
-                    document.getElementById('quota-sl').value = leaveConfig.sl;
-                    document.getElementById('adj-pl').value = leaveConfig.pl_adj || 0;
-                    document.getElementById('adj-sl').value = leaveConfig.sl_adj || 0;
-                    window.renderLeaveStats();
-                    window.renderLeaveHistory();
-                }, (error) => {
-                    console.error("Firestore sync error:", error);
-                    setSyncStatus('error', error.message);
-                });
-            }
-        });
-
-        // The Ultimate Save Function
-        window.syncDataToFirebase = async function() {
+        // --- NEW: Universal Save & Sync logic ---
+        function saveAllDataToLocalAndCloud() {
             const now = Date.now();
-            localLastUpdated = now;
-
-            // 1. ALWAYS Save locally first with Timestamp
             localStorage.setItem('Shubham_last_updated', now.toString());
-            localStorage.setItem('Shubham_tasks_local', JSON.stringify(allTasks));
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(allTasks));
             localStorage.setItem('Shubham_holidays', JSON.stringify(customHolidays));
             localStorage.setItem('Shubham_exceptions', JSON.stringify(exceptionDates));
             localStorage.setItem('Shubham_leaves', JSON.stringify(allLeaves));
             localStorage.setItem('Shubham_leave_config', JSON.stringify(leaveConfig));
 
-            // 2. Push to cloud
-            if (!db) return;
-            setSyncStatus('syncing');
-            try {
-                await setDoc(docRef, {
-                    tasks: allTasks,
-                    holidays: customHolidays,
-                    exceptions: exceptionDates,
-                    leaves: allLeaves,
-                    leaveConfig: leaveConfig,
-                    lastUpdated: now
-                }, { merge: true });
-                setSyncStatus('ok');
-            } catch (e) {
-                console.error("Error saving to Firebase:", e);
-                setSyncStatus('error', e.message);
-            }
-        };
+            updateFilterOptions();
+            refreshCurrentView();
+            renderDailySummary();
+            renderProductivityChart();
+            updateFooterStats();
+            
+            // If Firebase is ready, push changes
+            if (window.saveToCloud) window.saveToCloud(now);
+        }
 
-        // --- CALENDAR HELPERS ---
         function getSaturdayOccurrenceInMonth(dateObj) {
             if (dateObj.getDay() !== 6) return 0;
             const year = dateObj.getFullYear();
@@ -1040,6 +912,47 @@
             return dateObj.getDay() === 6 && isSecondOrFourthSaturday(dateObj);
         }
 
+        // --- Data Handling ---
+        function loadTasks() {
+            try {
+                const stored = localStorage.getItem(STORAGE_KEY);
+                allTasks = stored ? JSON.parse(stored) : [];
+                
+                allTasks = allTasks.map(t => {
+                    let safeDate = t.date;
+                    if (!safeDate || new Date(safeDate).toString() === 'Invalid Date') {
+                        safeDate = new Date().toISOString().split('T')[0];
+                    }
+                    return {
+                        ...t,
+                        date: safeDate,
+                        client: t.client || 'Unknown',
+                        name: t.name || 'Untitled',
+                        notes: t.notes || '',
+                        isDateless: t.isDateless || false
+                    };
+                });
+
+            } catch (e) { 
+                console.error("Data load error:", e); 
+                if (!allTasks) allTasks = []; 
+            }
+            
+            updateFilterOptions();
+            refreshCurrentView();
+            renderDailySummary();
+            renderProductivityChart();
+            renderMiniCalendar();
+            updateFooterStats();
+            
+            // Init Leave Config UI
+            document.getElementById('quota-pl').value = leaveConfig.pl;
+            document.getElementById('quota-sl').value = leaveConfig.sl;
+            document.getElementById('adj-pl').value = leaveConfig.pl_adj || 0;
+            document.getElementById('adj-sl').value = leaveConfig.sl_adj || 0;
+            renderLeaveStats();
+            renderLeaveHistory();
+        }
 
         // --- LEAVE MANAGEMENT LOGIC ---
         window.toggleLeaveConfig = function() {
@@ -1053,13 +966,13 @@
             const sl_adj = parseFloat(document.getElementById('adj-sl').value) || 0;
             
             leaveConfig = { pl, sl, pl_adj, sl_adj };
-            window.syncDataToFirebase();
-            window.renderLeaveStats();
-            window.showNotification("Configuration saved!");
-            window.toggleLeaveConfig(); 
+            saveAllDataToLocalAndCloud();
+            renderLeaveStats();
+            showNotification("Configuration saved!");
+            window.toggleLeaveConfig();
         };
 
-        window.getLeaveUsage = function() {
+        function getLeaveUsage() {
             let usedPL = 0;
             let usedSL = 0;
             let usedUnpaid = 0;
@@ -1067,14 +980,15 @@
             allLeaves.forEach(leave => {
                 const multiplier = leave.isHalfDay ? 0.5 : 1.0;
                 const days = leave.dates.length * multiplier;
+
                 if(leave.type === 'PL') usedPL += days;
                 else if(leave.type === 'SL') usedSL += days;
                 else if(leave.type === 'Unpaid') usedUnpaid += days;
             });
             return { usedPL, usedSL, usedUnpaid };
-        };
+        }
 
-        window.renderLeaveStats = function() {
+        function renderLeaveStats() {
             const currentMonthIndex = new Date().getMonth(); 
             
             const monthlyPL = leaveConfig.pl / 12;
@@ -1083,7 +997,7 @@
             const UnusedPL = (monthlyPL * (currentMonthIndex + 1)) + (leaveConfig.pl_adj || 0);
             const UnusedSL = (monthlySL * (currentMonthIndex + 1)) + (leaveConfig.sl_adj || 0);
             
-            const { usedPL, usedSL, usedUnpaid } = window.getLeaveUsage();
+            const { usedPL, usedSL, usedUnpaid } = getLeaveUsage();
             
             const balPL = UnusedPL - usedPL;
             const balSL = UnusedSL - usedSL;
@@ -1097,7 +1011,7 @@
             document.getElementById('used-unpaid').innerText = usedUnpaid;
 
             return { balPL, balSL }; 
-        };
+        }
 
         document.getElementById('leave-form').addEventListener('submit', (e) => {
             e.preventDefault();
@@ -1107,7 +1021,7 @@
             const isHalfDay = document.getElementById('leave-half-day').checked;
             
             if(dates.length === 0) {
-                window.showNotification("Please select dates");
+                showNotification("Please select dates");
                 return;
             }
             
@@ -1136,12 +1050,12 @@
             }
             
             if(cleanDates.length === 0) {
-                window.showNotification("No valid working days selected.");
+                showNotification("No valid working days selected.");
                 return;
             }
             
             const requestDays = cleanDates.length * (isHalfDay ? 0.5 : 1);
-            const { balPL, balSL } = window.renderLeaveStats(); 
+            const { balPL, balSL } = renderLeaveStats(); 
             
             if (type === 'PL') {
                 if (requestDays > balPL) {
@@ -1165,21 +1079,20 @@
             };
             
             allLeaves.push(leaveEntry);
-            window.syncDataToFirebase();
+            saveAllDataToLocalAndCloud();
             
-            // Local optimistic renders
-            window.renderLeaveStats();
-            window.renderLeaveHistory();
-            window.renderCalendar(); 
-            window.renderMiniCalendar();
+            renderLeaveStats();
+            renderLeaveHistory();
+            renderCalendar(); 
+            renderMiniCalendar();
             
             leaveDatepicker.clear();
             document.getElementById('leave-reason').value = '';
             document.getElementById('leave-half-day').checked = false;
-            window.showNotification("Leave Applied Successfully");
+            showNotification("Leave Applied Successfully");
         });
 
-        window.renderLeaveHistory = function() {
+        function renderLeaveHistory() {
             const container = document.getElementById('leave-history-list');
             container.innerHTML = '';
             
@@ -1215,13 +1128,17 @@
                 `;
                 container.appendChild(div);
             });
-        };
+        }
 
         window.deleteLeave = (id) => {
             if(!confirm("Delete this leave entry?")) return;
             allLeaves = allLeaves.filter(l => l.id !== id);
-            window.syncDataToFirebase();
-            window.showNotification("Leave deleted");
+            saveAllDataToLocalAndCloud();
+            renderLeaveStats();
+            renderLeaveHistory();
+            renderCalendar();
+            renderMiniCalendar();
+            showNotification("Leave deleted");
         };
 
         // --- Similarity Helper ---
@@ -1254,15 +1171,17 @@
         }
 
         // --- Notification Toast ---
-        window.showNotification = function(msg) {
+        function showNotification(msg) {
             const toast = document.getElementById('notification-toast');
             const msgEl = document.getElementById('notification-message');
             msgEl.innerText = msg;
             toast.classList.remove('translate-y-20', 'opacity-0');
             setTimeout(() => { toast.classList.add('translate-y-20', 'opacity-0'); }, 3000);
+        }
+
+        window.closeUndoToast = () => {
+            document.getElementById('undo-toast').classList.add('translate-y-20', 'opacity-0');
         };
-        
-        window.closeUndoToast = () => document.getElementById('undo-toast').classList.add('translate-y-20', 'opacity-0');
 
         // --- Navigation Logic ---
         window.switchView = (viewName) => {
@@ -1287,22 +1206,17 @@
             activeNav.classList.remove('text-gray-400', 'hover:text-white');
             activeNav.classList.add('text-white', 'bg-purple-500/20', 'shadow-sm');
 
-            if(viewName === 'home') window.renderHome();
-            if(viewName === 'tasks') window.renderArchive();
-            if(viewName === 'calendar') window.renderCalendar();
+            if(viewName === 'home') renderHome();
+            if(viewName === 'tasks') renderArchive();
+            if(viewName === 'calendar') renderCalendar();
         };
 
-        window.refreshCurrentView = function() {
-            if (document.getElementById('global-search').value.trim() !== "") {
-                window.handleGlobalSearch();
-            } else if (currentView === 'home') {
-                window.renderHome();
-            } else if (currentView === 'tasks') {
-                window.renderArchive();
-            } else if (currentView === 'calendar') {
-                window.renderCalendar();
-            }
-        };
+        function refreshCurrentView() {
+            if (document.getElementById('global-search').value.trim() !== "") window.handleGlobalSearch();
+            else if (currentView === 'home') renderHome();
+            else if (currentView === 'tasks') renderArchive();
+            else if (currentView === 'calendar') renderCalendar();
+        }
 
         window.clearSearch = () => {
             document.getElementById('global-search').value = '';
@@ -1355,11 +1269,11 @@
                 resultsContainer.innerHTML = '<p class="text-gray-500 italic text-center">No matching tasks found.</p>';
             } else {
                 results.sort((a,b) => new Date(b.date) - new Date(a.date));
-                results.forEach(task => { resultsContainer.appendChild(window.createTaskElement(task)); });
+                results.forEach(task => { resultsContainer.appendChild(createTaskElement(task)); });
             }
         };
 
-        window.updateFooterStats = function() {
+        function updateFooterStats() {
             const now = new Date();
             const currentMonth = now.getMonth();
             const currentYear = now.getFullYear();
@@ -1379,10 +1293,10 @@
             document.getElementById('stat-remaining').innerText = left;
             document.getElementById('stat-percent').innerText = `${percent}%`;
             document.getElementById('progress-bar').style.width = `${percent}%`;
-        };
+        }
 
         // --- Render Mini Calendar (Left Widget) ---
-        window.renderMiniCalendar = function() {
+        function renderMiniCalendar() {
             const now = new Date();
             const year = now.getFullYear();
             const month = now.getMonth();
@@ -1465,9 +1379,9 @@
                     : "mini-day-cell text-gray-700 opacity-60 select-none text-gray-500";
                 container.innerHTML += `<div class="${nextClass}">${i}</div>`;
             }
-        };
+        }
 
-        window.renderHome = function() {
+        function renderHome() {
             const container = document.getElementById('home-tasks-container');
             container.innerHTML = '';
             
@@ -1512,9 +1426,9 @@
                 const grouped = processCompletedTasks(limitedCompleted);
                 renderCompletedGroups(grouped, container);
             }
-        };
+        }
 
-        window.renderArchive = function() {
+        function renderArchive() {
             const container = document.getElementById('archive-container');
             container.innerHTML = '';
 
@@ -1582,7 +1496,7 @@
                     taskListDiv.id = `month-${year}-${month}`;
                     taskListDiv.className = "hidden mt-2 space-y-3 pl-2";
                     
-                    monthTasks.forEach(task => { taskListDiv.appendChild(window.createTaskElement(task)); });
+                    monthTasks.forEach(task => { taskListDiv.appendChild(createTaskElement(task)); });
                     
                     monthDiv.appendChild(taskListDiv);
                     yearContent.appendChild(monthDiv);
@@ -1591,9 +1505,9 @@
                 yearDiv.appendChild(yearContent);
                 container.appendChild(yearDiv);
             });
-        };
+        }
 
-        window.renderCalendar = function() {
+        function renderCalendar() {
             const container = document.getElementById('calendar-container');
             container.innerHTML = '';
             if (!container.dataset.dayActionBound) {
@@ -1772,9 +1686,8 @@
                 yearWrapper.appendChild(yearGrid);
                 container.appendChild(yearWrapper);
             });
-        };
+        }
 
-        // Modal Logic
         window.openHolidayModal = () => document.getElementById('holiday-modal').classList.remove('hidden');
         window.closeHolidayModal = () => document.getElementById('holiday-modal').classList.add('hidden');
 
@@ -1835,16 +1748,16 @@
 
             customHolidays = customHolidays.filter(h => h.date !== currentManagingDayoffDate);
             customHolidays.push({ name: name, date: currentManagingDayoffDate, showCountdown: true });
-            window.syncDataToFirebase();
-            window.showNotification("Holiday set!");
+            saveAllDataToLocalAndCloud();
+            showNotification("Holiday set!");
             window.closeManageDayoffModal();
         };
 
         window.deleteDayoffHoliday = () => {
             if (!currentManagingDayoffDate || !currentManagingDayoffHasHoliday) return;
             customHolidays = customHolidays.filter(h => h.date !== currentManagingDayoffDate);
-            window.syncDataToFirebase();
-            window.showNotification("Holiday deleted");
+            saveAllDataToLocalAndCloud();
+            showNotification("Holiday deleted");
             window.closeManageDayoffModal();
         };
 
@@ -1852,9 +1765,9 @@
             if (!currentManagingDayoffDate || !isCurrentWeekOff) return;
             if (!exceptionDates.includes(currentManagingDayoffDate)) {
                 exceptionDates.push(currentManagingDayoffDate);
-                window.syncDataToFirebase();
+                saveAllDataToLocalAndCloud();
             }
-            window.showNotification("Weekoff deleted");
+            showNotification("Weekoff deleted");
             window.closeManageDayoffModal();
         };
 
@@ -1864,8 +1777,8 @@
             const index = customHolidays.findIndex(h => h.date === currentManagingDate);
             if (index !== -1) {
                 customHolidays[index].name = newName;
-                window.syncDataToFirebase();
-                window.showNotification("Holiday updated");
+                saveAllDataToLocalAndCloud();
+                showNotification("Holiday updated");
             }
             window.closeManageHolidayModal();
         };
@@ -1873,15 +1786,15 @@
         window.deleteCurrentHoliday = () => {
             if (!currentManagingDate) return;
             customHolidays = customHolidays.filter(h => h.date !== currentManagingDate);
-            window.syncDataToFirebase();
-            window.showNotification("Holiday deleted");
+            saveAllDataToLocalAndCloud();
+            showNotification("Holiday deleted");
             window.closeManageHolidayModal();
         };
 
         window.deleteHoliday = (dateStr) => {
             customHolidays = customHolidays.filter(h => h.date !== dateStr);
-            window.syncDataToFirebase();
-            window.showNotification("Holiday deleted");
+            saveAllDataToLocalAndCloud();
+            showNotification("Holiday deleted");
         };
 
         document.getElementById('holiday-form').addEventListener('submit', (e) => {
@@ -1901,9 +1814,9 @@
                 customHolidays.push({ name: name || '', date: cleanDate, showCountdown: showCountdown });
             });
 
-            window.syncDataToFirebase();
+            saveAllDataToLocalAndCloud();
             window.closeHolidayModal();
-            window.showNotification("Holidays added!");
+            showNotification("Holidays added!");
             
             document.getElementById('holiday-name').value = '';
             document.getElementById('holiday-countdown').checked = true; 
@@ -1937,8 +1850,8 @@
             if(leave.dates.length === 0) {
                 allLeaves = allLeaves.filter(l => l.id !== currentManagingLeaveId);
             }
-            window.syncDataToFirebase();
-            window.showNotification("Leave Removed");
+            saveAllDataToLocalAndCloud();
+            showNotification("Leave Removed");
             window.closeManageLeaveModal();
         };
 
@@ -1952,7 +1865,7 @@
 
             const oldCost = leave.isHalfDay ? 0.5 : 1.0;
             const newCost = newIsHalf ? 0.5 : 1.0;
-            const stats = window.renderLeaveStats(); 
+            const stats = renderLeaveStats(); 
             let projectedPL = stats.balPL;
             let projectedSL = stats.balSL;
             
@@ -1977,8 +1890,8 @@
                 createdAt: new Date().toISOString()
             });
             
-            window.syncDataToFirebase();
-            window.showNotification("Leave updated successfully");
+            saveAllDataToLocalAndCloud();
+            showNotification("Leave updated successfully");
             window.closeManageLeaveModal();
         };
 
@@ -2112,11 +2025,11 @@
 
             const nowISO = new Date().toISOString();
             if (status === 'done') {
-                task.completed = true; task.completedAt = nowISO; task.ongoingAt = undefined; window.showNotification("Task marked as done");
+                task.completed = true; task.completedAt = nowISO; task.ongoingAt = undefined; showNotification("Task marked as done");
             } else if (status === 'ongoing') {
-                task.completed = false; task.completedAt = undefined; task.ongoingAt = nowISO; window.showNotification("Task marked as ongoing");
+                task.completed = false; task.completedAt = undefined; task.ongoingAt = nowISO; showNotification("Task marked as ongoing");
             }
-            window.syncDataToFirebase();
+            saveAllDataToLocalAndCloud();
             window.closeTaskStatusModal();
         };
 
@@ -2124,7 +2037,7 @@
             const task = allTasks.find(t => t.id === id);
             if (!task) return;
             if (task.completed) {
-                task.completed = false; task.completedAt = undefined; task.ongoingAt = undefined; window.syncDataToFirebase(); return;
+                task.completed = false; task.completedAt = undefined; task.ongoingAt = undefined; saveAllDataToLocalAndCloud(); return;
             }
             window.openTaskStatusModal(id);
         };
@@ -2134,7 +2047,7 @@
             if (index !== -1) {
                 const deleted = allTasks.splice(index, 1)[0];
                 deletedTaskStack.push(deleted);
-                window.syncDataToFirebase();
+                saveAllDataToLocalAndCloud();
                 const toast = document.getElementById('undo-toast');
                 toast.classList.remove('translate-y-20', 'opacity-0');
                 clearTimeout(undoTimeout);
@@ -2145,7 +2058,7 @@
         window.undoDelete = () => {
             const last = deletedTaskStack.pop();
             if (last) {
-                allTasks.push(last); window.syncDataToFirebase(); document.getElementById('undo-toast').classList.add('translate-y-20', 'opacity-0');
+                allTasks.push(last); saveAllDataToLocalAndCloud(); document.getElementById('undo-toast').classList.add('translate-y-20', 'opacity-0');
             }
         };
 
@@ -2216,7 +2129,7 @@
                 if(name==='Due Today') gradient='from-orange-500 to-amber-600';
                 div.innerHTML = `<div class="sticky top-20 z-40 flex items-center mb-6"><div class="bg-gradient-to-r ${gradient} text-white font-bold text-xs uppercase tracking-widest px-4 py-1.5 rounded-full shadow-lg backdrop-blur-sm">${name}</div><div class="h-px bg-white/10 flex-grow ml-4"></div></div>`;
                 const list = document.createElement('div'); list.className="space-y-4";
-                buckets[name].forEach(t => list.appendChild(window.createTaskElement(t)));
+                buckets[name].forEach(t => list.appendChild(createTaskElement(t)));
                 div.appendChild(list);
                 container.appendChild(div);
             });
@@ -2227,7 +2140,7 @@
                 const div = document.createElement('div');
                 div.innerHTML = `<div class="sticky top-20 z-40 flex items-center mb-6"><div class="bg-gradient-to-r from-slate-700 to-slate-600 text-white font-bold text-xs uppercase tracking-widest px-4 py-1.5 rounded-full shadow-lg">${g.title}</div><div class="h-px bg-white/10 flex-grow ml-4"></div></div>`;
                 const list = document.createElement('div'); list.className="space-y-3";
-                g.tasks.forEach(t => list.appendChild(window.createTaskElement(t)));
+                g.tasks.forEach(t => list.appendChild(createTaskElement(t)));
                 div.appendChild(list);
                 container.appendChild(div);
             });
@@ -2238,14 +2151,14 @@
             if(el) { el.classList.toggle('hidden'); document.getElementById(`arrow-${id}`).classList.toggle('rotate-90'); }
         };
         
-        window.copyNote = (text) => { navigator.clipboard.writeText(text); window.showNotification("Note copied!"); };
-        window.applyFilters = () => { window.refreshCurrentView(); };
+        window.copyNote = (text) => { navigator.clipboard.writeText(text); showNotification("Note copied!"); };
+        window.applyFilters = () => { refreshCurrentView(); };
         window.clearFilters = () => {
             document.getElementById('filter-client').value = ""; document.getElementById('filter-category').value = "";
-            document.getElementById('global-search').value = ""; filterDatepicker.clear(); window.refreshCurrentView();
+            document.getElementById('global-search').value = ""; filterDatepicker.clear(); refreshCurrentView();
         };
 
-        window.updateFilterOptions = function() {
+        function updateFilterOptions() {
             const cSet = new Set(['Akash Sir', 'DataLogy', 'Holiday Homes', 'JBulls', 'Prime Bullion']);
             const catSet = new Set(['Static', 'Carousel', 'LinkedIn', 'Story', 'Article']);
             allTasks.forEach(t => { if(t.client) cSet.add(t.client); if(t.name) catSet.add(t.name); });
@@ -2256,9 +2169,9 @@
             Array.from(cSet).sort().forEach(c => { const o=document.createElement('option'); o.value=c; o.text=c; cs.appendChild(o); });
             Array.from(catSet).sort().forEach(c => { const o=document.createElement('option'); o.value=c; o.text=c; cat.appendChild(o); });
             cs.value = savedC; cat.value = savedCat;
-        };
+        }
 
-        window.renderDailySummary = function() {
+        function renderDailySummary() {
             const now = new Date(); now.setHours(0,0,0,0);
             const todayTs = now.getTime();
             const doneToday = allTasks.filter(t => 
@@ -2278,21 +2191,21 @@
                     const dateStr = t.isDateless ? '' : ` <span class="text-gray-500">(${new Date(t.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })})</span>`;
                     const statusBeforeDate = item.type === 'ongoing' ? ' Ongoing' : '';
                     const summaryKey = `${t.id}-${item.type}`;
-                    return `<div class="mb-1.5 flex justify-between group/item hover:bg-white/5 p-1 rounded"><span class="text-gray-300 text-[11px] summary-text">➤ ${t.client} ${t.name}${statusBeforeDate}${dateStr}</span><button onclick="excludedSummaryIds.add('${summaryKey}'); window.renderDailySummary()" class="opacity-0 group-hover/item:opacity-100 text-gray-500 hover:text-red-400"><i class="fas fa-times text-[10px]"></i></button></div>`;
+                    return `<div class="mb-1.5 flex justify-between group/item hover:bg-white/5 p-1 rounded"><span class="text-gray-300 text-[11px] summary-text">➤ ${t.client} ${t.name}${statusBeforeDate}${dateStr}</span><button onclick="excludedSummaryIds.add('${summaryKey}'); renderDailySummary()" class="opacity-0 group-hover/item:opacity-100 text-gray-500 hover:text-red-400"><i class="fas fa-times text-[10px]"></i></button></div>`;
                 }).join('');
             } else {
                 content.innerHTML = '<p class="text-gray-500 italic text-center py-4 text-[11px]">No done/ongoing tasks for today.</p>';
                 panel.classList.remove('opacity-0', 'translate-x-10');
             }
-        };
+        }
 
         window.copySummary = () => {
             const text = Array.from(document.querySelectorAll('.summary-text')).map(el => el.innerText).join('\n');
-            if(!text) return window.showNotification("Nothing to copy");
-            navigator.clipboard.writeText("Today's Task\n" + text).then(()=>window.showNotification("Copied summary!"));
+            if(!text) return showNotification("Nothing to copy");
+            navigator.clipboard.writeText("Today's Task\n" + text).then(()=>showNotification("Copied summary!"));
         };
 
-        window.renderProductivityChart = function() {
+        function renderProductivityChart() {
             const days = []; const counts = []; const labels = [];
             let limit = currentChartTimeframe === 'week' ? 7 : (currentChartTimeframe === 'month' ? 30 : 14);
             for(let i=limit-1; i>=0; i--) {
@@ -2316,7 +2229,7 @@
             };
             if(productivityChart) productivityChart.updateOptions({xaxis:{categories:labels}, series:[{data:counts}]});
             else { productivityChart = new ApexCharts(document.querySelector("#task-chart"), options); productivityChart.render(); }
-        };
+        }
         
         window.updateChartTimeframe = (tf) => { 
             currentChartTimeframe = tf; 
@@ -2325,7 +2238,7 @@
                 if (id === tf) btn.className = "px-2 py-0.5 text-[10px] font-medium rounded transition-all bg-purple-500/20 text-purple-200 shadow-sm";
                 else btn.className = "px-2 py-0.5 text-[10px] font-medium rounded transition-all text-gray-400 hover:text-white";
             });
-            window.renderProductivityChart(); 
+            renderProductivityChart(); 
         };
 
         function escapeHtml(text) {
@@ -2371,7 +2284,7 @@
                     isDateless: isDateless
                 });
             });
-            window.syncDataToFirebase();
+            saveAllDataToLocalAndCloud();
             window.clearTaskForm();
         });
 
@@ -2393,7 +2306,7 @@
                      t.date = new Date(new Date().getTime() - (offset*60*1000)).toISOString().split('T')[0];
                      t.isDateless = true;
                 }
-                window.syncDataToFirebase();
+                saveAllDataToLocalAndCloud();
                 window.closeEditModal();
             }
         });
@@ -2415,7 +2328,119 @@
 
         ['task-client', 'task-category', 'task-notes'].forEach(id => document.getElementById(id).addEventListener('input', checkDuplicateEntry));
 
-        // Load instantly from localStorage before Firebase connects
+        // --- Firebase Background Sync System ---
+        window.lastSyncError = "Connecting to Firebase...";
+        function setSyncStatus(status, errorMsg = "") {
+            const dot = document.getElementById('sync-dot');
+            const text = document.getElementById('sync-text');
+            if (!dot || !text) return;
+            
+            if (status === 'ok') {
+                dot.className = "w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]";
+                text.innerText = "Cloud Synced";
+                window.lastSyncError = "Successfully connected and synced to Firebase!";
+            } else if (status === 'error') {
+                dot.className = "w-2 h-2 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)]";
+                text.innerText = "Sync Error";
+                window.lastSyncError = "Error: " + errorMsg + "\n\n(Make sure you are using 'Firestore Database' in Firebase Console and your Rules allow read/write)";
+            } else if (status === 'syncing') {
+                dot.className = "w-2 h-2 rounded-full bg-yellow-500 animate-pulse";
+                text.innerText = "Syncing...";
+                window.lastSyncError = "Currently syncing data to cloud...";
+            }
+        }
+
+        async function initFirebaseSync() {
+            try {
+                setSyncStatus('syncing');
+                // Dynamically import Firebase so we don't break existing JS scope
+                const { initializeApp } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js");
+                const { getAuth, signInAnonymously, onAuthStateChanged } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js");
+                const { getFirestore, doc, setDoc, onSnapshot } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
+
+                const firebaseConfig = {
+                    apiKey: "AIzaSyDUTdD2XEJ4hCxVM7qtbmrv-X2lLqjwFvQ",
+                    authDomain: "work-task-managment.firebaseapp.com",
+                    projectId: "work-task-managment",
+                    storageBucket: "work-task-managment.firebasestorage.app",
+                    messagingSenderId: "860176413823",
+                    appId: "1:860176413823:web:69779dd4c565765e887b4a"
+                };
+
+                const app = initializeApp(firebaseConfig);
+                const auth = getAuth(app);
+                const db = getFirestore(app);
+                const docRef = doc(db, 'task_manager', 'global_shared_data');
+
+                // Attach push to cloud capability globally
+                window.saveToCloud = async function(timestamp) {
+                    if(!db) return;
+                    setSyncStatus('syncing');
+                    try {
+                        await setDoc(docRef, {
+                            tasks: allTasks,
+                            holidays: customHolidays,
+                            exceptions: exceptionDates,
+                            leaves: allLeaves,
+                            leaveConfig: leaveConfig,
+                            lastUpdated: timestamp || Date.now()
+                        }, { merge: true });
+                        setSyncStatus('ok');
+                    } catch (e) {
+                        console.error("Firebase save error:", e);
+                        setSyncStatus('error', e.message);
+                    }
+                };
+
+                await signInAnonymously(auth);
+
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        onSnapshot(docRef, (snapshot) => {
+                            if (snapshot.exists()) {
+                                const data = snapshot.data();
+                                const cloudTime = data.lastUpdated || 0;
+                                let _localLastUpdated = parseInt(localStorage.getItem('Shubham_last_updated') || '0');
+
+                                // Only overwrite local data if the cloud is ACTUALLY newer
+                                if (cloudTime > _localLastUpdated || (_localLastUpdated === 0 && cloudTime > 0)) {
+                                    allTasks = data.tasks || [];
+                                    customHolidays = data.holidays || [];
+                                    exceptionDates = data.exceptions || [];
+                                    allLeaves = data.leaves || [];
+                                    leaveConfig = data.leaveConfig || {"pl":0, "sl":0, "pl_adj":0, "sl_adj":0};
+                                    
+                                    localStorage.setItem('Shubham_last_updated', cloudTime.toString());
+                                    localStorage.setItem(STORAGE_KEY, JSON.stringify(allTasks));
+                                    localStorage.setItem('Shubham_holidays', JSON.stringify(customHolidays));
+                                    localStorage.setItem('Shubham_exceptions', JSON.stringify(exceptionDates));
+                                    localStorage.setItem('Shubham_leaves', JSON.stringify(allLeaves));
+                                    localStorage.setItem('Shubham_leave_config', JSON.stringify(leaveConfig));
+                                    
+                                    loadTasks(); // Visually update everything with new data
+                                    setSyncStatus('ok');
+                                } else if (_localLastUpdated > cloudTime) {
+                                    window.saveToCloud(_localLastUpdated);
+                                } else {
+                                    setSyncStatus('ok');
+                                }
+                            } else {
+                                // DB empty, initialize it with whatever we have locally
+                                window.saveToCloud(Date.now());
+                            }
+                        }, (error) => {
+                            setSyncStatus('error', error.message);
+                        });
+                    }
+                });
+
+            } catch(e) {
+                console.error("Failed to load Firebase SDKs", e);
+                setSyncStatus('error', "Failed to load Firebase SDKs");
+            }
+        }
+
+        // --- Boot Application ---
         document.addEventListener('DOMContentLoaded', () => {
             mainDatepicker = flatpickr("#task-date", { mode: "multiple", dateFormat: "Y-m-d", minDate: "today", disableMobile: "true", onChange: checkDuplicateEntry });
             editDatepicker = flatpickr("#edit-date", { dateFormat: "Y-m-d", disableMobile: "true" });
@@ -2425,20 +2450,11 @@
             
             document.getElementById('current-date').textContent = new Date().toLocaleDateString(undefined, {weekday:'long', month:'short', day:'numeric'});
             
-            // Initial Render from LocalStorage so UI never blanks out
-            window.updateFilterOptions();
-            window.refreshCurrentView();
-            window.renderDailySummary();
-            window.renderProductivityChart();
-            window.renderMiniCalendar();
-            window.updateFooterStats();
-
-            document.getElementById('quota-pl').value = leaveConfig.pl;
-            document.getElementById('quota-sl').value = leaveConfig.sl;
-            document.getElementById('adj-pl').value = leaveConfig.pl_adj || 0;
-            document.getElementById('adj-sl').value = leaveConfig.sl_adj || 0;
-            window.renderLeaveStats();
-            window.renderLeaveHistory();
+            // 1. Instantly load from device storage (Offline-first approach)
+            loadTasks();
+            
+            // 2. Connect to cloud and start listening for live changes
+            initFirebaseSync();
         });
     </script>
 </body>
