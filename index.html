@@ -409,7 +409,6 @@
                 <div id="manage-dayoff-tags" class="flex items-center justify-center gap-2"></div>
                 <p class="text-sm text-gray-400 text-center">Add or remove holiday/weekoff for this date.</p>
                 <div class="space-y-2 mt-8">
-                    <!-- Changed: Removed 'hidden' class logic in JS to allow adding holidays on Weekoffs -->
                     <button id="dayoff-add-holiday-btn" onclick="addDayoffHoliday()" class="w-full px-4 py-3 bg-blue-500/10 hover:bg-blue-500/20 text-blue-300 rounded-xl font-medium transition-colors border border-blue-500/20">Add/Update Holiday</button>
                     <button id="dayoff-delete-holiday-btn" onclick="deleteDayoffHoliday()" class="hidden w-full px-4 py-3 bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 rounded-xl font-medium transition-colors border border-purple-500/20">Remove Holiday</button>
                     <button id="dayoff-delete-weekoff-btn" onclick="deleteDayoffWeekoff()" class="hidden w-full px-4 py-3 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-xl font-medium transition-colors border border-red-500/20">Remove Weekoff</button>
@@ -562,12 +561,12 @@
                 <input 
                     type="text" 
                     id="global-search" 
-                    oninput="window.handleGlobalSearch()" 
+                    oninput="handleGlobalSearch()" 
                     placeholder="Search global history..." 
                     class="block w-full pl-10 pr-10 py-2 border border-white/5 rounded-xl leading-5 bg-white/5 text-gray-300 placeholder-gray-500 focus:outline-none focus:bg-white/10 focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 sm:text-sm transition-all"
                 >
                 <!-- Clear Button -->
-                <button id="search-clear-btn" onclick="window.clearSearch()" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-white transition-colors hidden cursor-pointer z-10">
+                <button id="search-clear-btn" onclick="clearSearch()" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-white transition-colors hidden cursor-pointer z-10">
                     <i class="fas fa-times-circle"></i>
                 </button>
             </div>
@@ -580,7 +579,7 @@
         <div id="view-search" class="hidden">
             <div class="flex items-center justify-between mb-6">
                 <h2 class="text-xl font-display font-medium text-white"><i class="fas fa-search text-purple-400 mr-2"></i> Search Results</h2>
-                <button onclick="document.getElementById('global-search').value=''; window.handleGlobalSearch()" class="text-xs text-gray-400 hover:text-white">Clear Search</button>
+                <button onclick="document.getElementById('global-search').value=''; handleGlobalSearch()" class="text-xs text-gray-400 hover:text-white">Clear Search</button>
             </div>
             <div id="search-results-container" class="space-y-4"></div>
         </div>
@@ -627,7 +626,7 @@
                         </div>
                     </div>
                     <div class="flex justify-end pt-2 gap-3">
-                        <button type="button" onclick="window.clearTaskForm()" class="h-[48px] px-6 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white font-medium rounded-xl transition-colors border border-white/5">
+                        <button type="button" onclick="clearTaskForm()" class="h-[48px] px-6 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white font-medium rounded-xl transition-colors border border-white/5">
                             Clear
                         </button>
                         <button id="add-task-btn" type="submit" class="w-full md:w-auto h-[48px] bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-medium rounded-xl px-8 flex items-center justify-center gap-2 transition-all shadow-lg hover:shadow-purple-500/30 active:scale-95 border border-white/10 disabled:opacity-50 disabled:cursor-not-allowed">
@@ -641,13 +640,13 @@
             <div class="flex flex-wrap gap-3 mb-10 items-center">
                 <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider mr-2"><i class="fas fa-filter mr-1"></i> Filter:</span>
                 <div class="relative min-w-[140px]">
-                    <select id="filter-client" onchange="window.applyFilters()" class="w-full glass-input rounded-lg px-3 py-2 text-white text-xs font-medium focus:outline-none appearance-none cursor-pointer border-white/5 hover:bg-white/10">
+                    <select id="filter-client" onchange="applyFilters()" class="w-full glass-input rounded-lg px-3 py-2 text-white text-xs font-medium focus:outline-none appearance-none cursor-pointer border-white/5 hover:bg-white/10">
                         <option value="">All Clients</option>
                     </select>
                     <i class="fas fa-chevron-down absolute right-3 top-2.5 text-gray-500 pointer-events-none text-[10px]"></i>
                 </div>
                 <div class="relative min-w-[140px]">
-                    <select id="filter-category" onchange="window.applyFilters()" class="w-full glass-input rounded-lg px-3 py-2 text-white text-xs font-medium focus:outline-none appearance-none cursor-pointer border-white/5 hover:bg-white/10">
+                    <select id="filter-category" onchange="applyFilters()" class="w-full glass-input rounded-lg px-3 py-2 text-white text-xs font-medium focus:outline-none appearance-none cursor-pointer border-white/5 hover:bg-white/10">
                         <option value="">All Types</option>
                     </select>
                     <i class="fas fa-chevron-down absolute right-3 top-2.5 text-gray-500 pointer-events-none text-[10px]"></i>
@@ -655,7 +654,7 @@
                 <div class="relative min-w-[120px]">
                     <input type="text" id="filter-date" placeholder="Specific Date" class="w-full glass-input rounded-lg px-3 py-2 text-white text-xs font-medium focus:outline-none text-center cursor-pointer border-white/5 hover:bg-white/10">
                 </div>
-                <button onclick="window.clearFilters()" class="ml-auto px-4 py-2 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white rounded-lg text-xs transition-colors font-medium border border-white/5">Reset Filters</button>
+                <button onclick="clearFilters()" class="ml-auto px-4 py-2 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white rounded-lg text-xs transition-colors font-medium border border-white/5">Reset Filters</button>
             </div>
 
             <!-- Active Task Container -->
@@ -680,7 +679,7 @@
         <div id="view-calendar" class="hidden">
             <div class="flex justify-between items-center mb-8">
                 <h2 class="text-2xl font-display font-semibold text-white">Yearly Calendar</h2>
-                <button onclick="window.openHolidayModal()" class="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-sm font-medium transition-colors">
+                <button onclick="openHolidayModal()" class="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-sm font-medium transition-colors">
                     <i class="fas fa-calendar-plus mr-2"></i> Add Holiday
                 </button>
             </div>
@@ -693,7 +692,7 @@
             
             <!-- Toggle for Config -->
             <div class="mb-4 text-right">
-                <button onclick="window.toggleLeaveConfig()" class="text-xs text-gray-400 hover:text-white flex items-center gap-2 ml-auto">
+                <button onclick="toggleLeaveConfig()" class="text-xs text-gray-400 hover:text-white flex items-center gap-2 ml-auto">
                     <i class="fas fa-cog"></i> Settings
                 </button>
             </div>
@@ -732,7 +731,7 @@
                     </div>
                 </div>
 
-                <button onclick="window.saveLeaveConfig()" class="w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl font-medium transition-all shadow-lg shadow-blue-900/20">Save Configuration</button>
+                <button onclick="saveLeaveConfig()" class="w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl font-medium transition-all shadow-lg shadow-blue-900/20">Save Configuration</button>
             </div>
 
             <!-- Dashboard Stats -->
@@ -847,7 +846,7 @@
     <!-- Logic -->
     <script>
         // Global State
-        let allTasks = [];
+        let allTasks = JSON.parse(localStorage.getItem('Shubham_tasks_local') || '[]');
         let deletedTaskStack = [];
         let excludedSummaryIds = new Set();
         let customHolidays = JSON.parse(localStorage.getItem('Shubham_holidays') || '[]');
@@ -869,8 +868,36 @@
         let currentManagingLeaveDate = null;
         let pendingTaskStatusId = null;
 
+        // Cloud sync variables
+        let isFirebaseReady = false;
+        let isIncomingSync = false;
+        let pendingCloudSave = false;
+
+        window.lastSyncError = "Connecting to Firebase...";
+        function setSyncStatus(status, errorMsg = "") {
+            const dot = document.getElementById('sync-dot');
+            const text = document.getElementById('sync-text');
+            if (!dot || !text) return;
+            
+            if (status === 'ok') {
+                dot.className = "w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]";
+                text.innerText = "Cloud Synced";
+                window.lastSyncError = "Successfully connected and synced to Firebase!";
+            } else if (status === 'error') {
+                dot.className = "w-2 h-2 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)]";
+                text.innerText = "Sync Error";
+                window.lastSyncError = "Error: " + errorMsg + "\n\n(Make sure you have created a 'Firestore Database' and your Rules are set to allow read/write)";
+            } else if (status === 'syncing') {
+                dot.className = "w-2 h-2 rounded-full bg-yellow-500 animate-pulse";
+                text.innerText = "Syncing...";
+                window.lastSyncError = "Currently syncing data to cloud...";
+            }
+        }
+
         // --- NEW: Universal Save & Sync logic ---
-        function saveAllDataToLocalAndCloud() {
+        window.saveAllDataToLocalAndCloud = function() {
+            if (isIncomingSync) return; // Don't bounce back an incoming sync
+            
             const now = Date.now();
             localStorage.setItem('Shubham_last_updated', now.toString());
             localStorage.setItem(STORAGE_KEY, JSON.stringify(allTasks));
@@ -885,9 +912,48 @@
             renderProductivityChart();
             updateFooterStats();
             
-            // If Firebase is ready, push changes
-            if (window.saveToCloud) window.saveToCloud(now);
-        }
+            // If Firebase is ready, push immediately. Otherwise, queue it up.
+            if (isFirebaseReady && window.saveToCloud) {
+                window.saveToCloud(now);
+            } else {
+                pendingCloudSave = true;
+                setSyncStatus('syncing');
+            }
+        };
+
+        // Make functions globally available to inline HTML attributes
+        window.switchView = switchView;
+        window.handleGlobalSearch = handleGlobalSearch;
+        window.clearSearch = clearSearch;
+        window.clearTaskForm = clearTaskForm;
+        window.applyFilters = applyFilters;
+        window.clearFilters = clearFilters;
+        window.openHolidayModal = openHolidayModal;
+        window.closeHolidayModal = closeHolidayModal;
+        window.toggleLeaveConfig = toggleLeaveConfig;
+        window.saveLeaveConfig = saveLeaveConfig;
+        window.deleteCurrentHoliday = deleteCurrentHoliday;
+        window.saveHolidayChanges = saveHolidayChanges;
+        window.closeManageHolidayModal = closeManageHolidayModal;
+        window.addDayoffHoliday = addDayoffHoliday;
+        window.deleteDayoffHoliday = deleteDayoffHoliday;
+        window.deleteDayoffWeekoff = deleteDayoffWeekoff;
+        window.closeManageDayoffModal = closeManageDayoffModal;
+        window.deleteCurrentLeaveDay = deleteCurrentLeaveDay;
+        window.saveLeaveDayChanges = saveLeaveDayChanges;
+        window.closeManageLeaveModal = closeManageLeaveModal;
+        window.setTaskStatus = setTaskStatus;
+        window.closeTaskStatusModal = closeTaskStatusModal;
+        window.copySummary = copySummary;
+        window.updateChartTimeframe = updateChartTimeframe;
+        window.undoDelete = undoDelete;
+        window.closeUndoToast = closeUndoToast;
+        window.toggleNotes = toggleNotes;
+        window.toggleTask = toggleTask;
+        window.openEditModal = openEditModal;
+        window.deleteTask = deleteTask;
+        window.copyNote = copyNote;
+        window.deleteLeave = deleteLeave;
 
         function getSaturdayOccurrenceInMonth(dateObj) {
             if (dateObj.getDay() !== 6) return 0;
@@ -955,11 +1021,11 @@
         }
 
         // --- LEAVE MANAGEMENT LOGIC ---
-        window.toggleLeaveConfig = function() {
+        function toggleLeaveConfig() {
             document.getElementById('leave-config-panel').classList.toggle('hidden');
-        };
+        }
 
-        window.saveLeaveConfig = function() {
+        function saveLeaveConfig() {
             const pl = parseFloat(document.getElementById('quota-pl').value) || 0;
             const sl = parseFloat(document.getElementById('quota-sl').value) || 0;
             const pl_adj = parseFloat(document.getElementById('adj-pl').value) || 0;
@@ -969,8 +1035,8 @@
             saveAllDataToLocalAndCloud();
             renderLeaveStats();
             showNotification("Configuration saved!");
-            window.toggleLeaveConfig();
-        };
+            toggleLeaveConfig();
+        }
 
         function getLeaveUsage() {
             let usedPL = 0;
@@ -1124,13 +1190,13 @@
                         </div>
                         <p class="text-xs text-gray-500 mt-1">${leave.reason || 'No reason provided'}</p>
                     </div>
-                    <button onclick="window.deleteLeave('${leave.id}')" class="text-xs bg-red-500/10 hover:bg-red-500/20 text-red-400 px-3 py-1.5 rounded-lg transition-colors border border-red-500/20">Delete</button>
+                    <button onclick="deleteLeave('${leave.id}')" class="text-xs bg-red-500/10 hover:bg-red-500/20 text-red-400 px-3 py-1.5 rounded-lg transition-colors border border-red-500/20">Delete</button>
                 `;
                 container.appendChild(div);
             });
         }
 
-        window.deleteLeave = (id) => {
+        function deleteLeave(id) {
             if(!confirm("Delete this leave entry?")) return;
             allLeaves = allLeaves.filter(l => l.id !== id);
             saveAllDataToLocalAndCloud();
@@ -1139,7 +1205,7 @@
             renderCalendar();
             renderMiniCalendar();
             showNotification("Leave deleted");
-        };
+        }
 
         // --- Similarity Helper ---
         function getSimilarity(s1, s2) {
@@ -1179,17 +1245,17 @@
             setTimeout(() => { toast.classList.add('translate-y-20', 'opacity-0'); }, 3000);
         }
 
-        window.closeUndoToast = () => {
+        function closeUndoToast() {
             document.getElementById('undo-toast').classList.add('translate-y-20', 'opacity-0');
-        };
+        }
 
         // --- Navigation Logic ---
-        window.switchView = (viewName) => {
+        function switchView(viewName) {
             currentView = viewName;
             const navIds = ['home', 'tasks', 'calendar', 'leaves'];
             const viewIds = ['view-home', 'view-tasks', 'view-calendar', 'view-leaves'];
             
-            if (document.getElementById('global-search').value !== "") window.clearSearch();
+            if (document.getElementById('global-search').value !== "") clearSearch();
             
             document.getElementById('view-search').classList.add('hidden');
             
@@ -1209,21 +1275,21 @@
             if(viewName === 'home') renderHome();
             if(viewName === 'tasks') renderArchive();
             if(viewName === 'calendar') renderCalendar();
-        };
+        }
 
         function refreshCurrentView() {
-            if (document.getElementById('global-search').value.trim() !== "") window.handleGlobalSearch();
+            if (document.getElementById('global-search').value.trim() !== "") handleGlobalSearch();
             else if (currentView === 'home') renderHome();
             else if (currentView === 'tasks') renderArchive();
             else if (currentView === 'calendar') renderCalendar();
         }
 
-        window.clearSearch = () => {
+        function clearSearch() {
             document.getElementById('global-search').value = '';
-            window.handleGlobalSearch();
-        };
+            handleGlobalSearch();
+        }
 
-        window.handleGlobalSearch = () => {
+        function handleGlobalSearch() {
             const query = document.getElementById('global-search').value.toLowerCase().trim();
             const viewIds = ['view-home', 'view-tasks', 'view-calendar', 'view-leaves'];
             const searchView = document.getElementById('view-search');
@@ -1234,7 +1300,7 @@
             if (query === "") {
                 searchView.classList.add('hidden');
                 clearBtn.classList.add('hidden');
-                window.switchView(currentView);
+                switchView(currentView);
                 return;
             }
 
@@ -1271,7 +1337,7 @@
                 results.sort((a,b) => new Date(b.date) - new Date(a.date));
                 results.forEach(task => { resultsContainer.appendChild(createTaskElement(task)); });
             }
-        };
+        }
 
         function updateFooterStats() {
             const now = new Date();
@@ -1517,7 +1583,7 @@
                     const dateStr = cell.dataset.date;
                     const hasHoliday = cell.dataset.hasHoliday === '1';
                     const hasWeekoff = cell.dataset.hasWeekoff === '1';
-                    window.openManageDayoffModal(dateStr, hasHoliday, hasWeekoff);
+                    openManageDayoffModal(dateStr, hasHoliday, hasWeekoff);
                 });
                 container.dataset.dayActionBound = '1';
             }
@@ -1688,24 +1754,24 @@
             });
         }
 
-        window.openHolidayModal = () => document.getElementById('holiday-modal').classList.remove('hidden');
-        window.closeHolidayModal = () => document.getElementById('holiday-modal').classList.add('hidden');
+        function openHolidayModal() { document.getElementById('holiday-modal').classList.remove('hidden'); }
+        function closeHolidayModal() { document.getElementById('holiday-modal').classList.add('hidden'); }
 
-        window.openManageHolidayModal = (dateStr) => {
+        function openManageHolidayModal(dateStr) {
             const holiday = customHolidays.find(h => h.date === dateStr);
             if (!holiday) return;
             currentManagingDate = dateStr;
             document.getElementById('manage-holiday-date-display').textContent = dateStr;
             document.getElementById('manage-holiday-name').value = holiday.name || '';
             document.getElementById('manage-holiday-modal').classList.remove('hidden');
-        };
+        }
 
-        window.closeManageHolidayModal = () => {
+        function closeManageHolidayModal() {
             document.getElementById('manage-holiday-modal').classList.add('hidden');
             currentManagingDate = null;
-        };
+        }
 
-        window.openManageDayoffModal = (dateStr, hasHoliday, hasWeekoff) => {
+        function openManageDayoffModal(dateStr, hasHoliday, hasWeekoff) {
             currentManagingDayoffDate = dateStr;
             currentManagingDayoffHasHoliday = !!hasHoliday;
             isCurrentWeekOff = !!hasWeekoff;
@@ -1729,9 +1795,9 @@
             weekoffBtn.classList.toggle('hidden', !isCurrentWeekOff);
 
             document.getElementById('manage-dayoff-modal').classList.remove('hidden');
-        };
+        }
 
-        window.closeManageDayoffModal = () => {
+        function closeManageDayoffModal() {
             document.getElementById('manage-dayoff-modal').classList.add('hidden');
             currentManagingDayoffDate = null;
             currentManagingDayoffHasHoliday = false;
@@ -1739,9 +1805,9 @@
             document.getElementById('dayoff-add-holiday-btn').classList.add('hidden');
             document.getElementById('dayoff-delete-holiday-btn').classList.add('hidden');
             document.getElementById('dayoff-delete-weekoff-btn').classList.add('hidden');
-        };
+        }
 
-        window.addDayoffHoliday = () => {
+        function addDayoffHoliday() {
             if (!currentManagingDayoffDate) return;
             const name = prompt("Enter Holiday Name:", "");
             if(name === null) return; 
@@ -1750,28 +1816,28 @@
             customHolidays.push({ name: name, date: currentManagingDayoffDate, showCountdown: true });
             saveAllDataToLocalAndCloud();
             showNotification("Holiday set!");
-            window.closeManageDayoffModal();
-        };
+            closeManageDayoffModal();
+        }
 
-        window.deleteDayoffHoliday = () => {
+        function deleteDayoffHoliday() {
             if (!currentManagingDayoffDate || !currentManagingDayoffHasHoliday) return;
             customHolidays = customHolidays.filter(h => h.date !== currentManagingDayoffDate);
             saveAllDataToLocalAndCloud();
             showNotification("Holiday deleted");
-            window.closeManageDayoffModal();
-        };
+            closeManageDayoffModal();
+        }
 
-        window.deleteDayoffWeekoff = () => {
+        function deleteDayoffWeekoff() {
             if (!currentManagingDayoffDate || !isCurrentWeekOff) return;
             if (!exceptionDates.includes(currentManagingDayoffDate)) {
                 exceptionDates.push(currentManagingDayoffDate);
                 saveAllDataToLocalAndCloud();
             }
             showNotification("Weekoff deleted");
-            window.closeManageDayoffModal();
-        };
+            closeManageDayoffModal();
+        }
 
-        window.saveHolidayChanges = () => {
+        function saveHolidayChanges() {
             if (!currentManagingDate) return;
             const newName = document.getElementById('manage-holiday-name').value;
             const index = customHolidays.findIndex(h => h.date === currentManagingDate);
@@ -1780,16 +1846,16 @@
                 saveAllDataToLocalAndCloud();
                 showNotification("Holiday updated");
             }
-            window.closeManageHolidayModal();
-        };
+            closeManageHolidayModal();
+        }
 
-        window.deleteCurrentHoliday = () => {
+        function deleteCurrentHoliday() {
             if (!currentManagingDate) return;
             customHolidays = customHolidays.filter(h => h.date !== currentManagingDate);
             saveAllDataToLocalAndCloud();
             showNotification("Holiday deleted");
-            window.closeManageHolidayModal();
-        };
+            closeManageHolidayModal();
+        }
 
         window.deleteHoliday = (dateStr) => {
             customHolidays = customHolidays.filter(h => h.date !== dateStr);
@@ -1815,7 +1881,7 @@
             });
 
             saveAllDataToLocalAndCloud();
-            window.closeHolidayModal();
+            closeHolidayModal();
             showNotification("Holidays added!");
             
             document.getElementById('holiday-name').value = '';
@@ -1824,7 +1890,7 @@
         });
 
         // --- NEW: Manage Leave Modal Logic ---
-        window.openManageLeaveModal = (id, dateStr) => {
+        function openManageLeaveModal(id, dateStr) {
             const leave = allLeaves.find(l => l.id === id);
             if(!leave) return;
             currentManagingLeaveId = id;
@@ -1833,15 +1899,15 @@
             document.getElementById('manage-leave-type').value = leave.type;
             document.getElementById('manage-leave-half-day').checked = leave.isHalfDay;
             document.getElementById('manage-leave-modal').classList.remove('hidden');
-        };
+        }
 
-        window.closeManageLeaveModal = () => {
+        function closeManageLeaveModal() {
             document.getElementById('manage-leave-modal').classList.add('hidden');
             currentManagingLeaveId = null;
             currentManagingLeaveDate = null;
-        };
+        }
 
-        window.deleteCurrentLeaveDay = () => {
+        function deleteCurrentLeaveDay() {
             if(!currentManagingLeaveId || !currentManagingLeaveDate) return;
             const leave = allLeaves.find(l => l.id === currentManagingLeaveId);
             if(!leave) return;
@@ -1852,16 +1918,16 @@
             }
             saveAllDataToLocalAndCloud();
             showNotification("Leave Removed");
-            window.closeManageLeaveModal();
-        };
+            closeManageLeaveModal();
+        }
 
-        window.saveLeaveDayChanges = () => {
+        function saveLeaveDayChanges() {
             const newType = document.getElementById('manage-leave-type').value;
             const newIsHalf = document.getElementById('manage-leave-half-day').checked;
             const leave = allLeaves.find(l => l.id === currentManagingLeaveId);
             
-            if(!leave) return window.closeManageLeaveModal(); 
-            if(leave.type === newType && leave.isHalfDay === newIsHalf && leave.dates.length === 1) return window.closeManageLeaveModal();
+            if(!leave) return closeManageLeaveModal(); 
+            if(leave.type === newType && leave.isHalfDay === newIsHalf && leave.dates.length === 1) return closeManageLeaveModal();
 
             const oldCost = leave.isHalfDay ? 0.5 : 1.0;
             const newCost = newIsHalf ? 0.5 : 1.0;
@@ -1892,10 +1958,10 @@
             
             saveAllDataToLocalAndCloud();
             showNotification("Leave updated successfully");
-            window.closeManageLeaveModal();
-        };
+            closeManageLeaveModal();
+        }
 
-        window.createTaskElement = function(task) {
+        function createTaskElement(task) {
             const taskEl = document.createElement('div');
             let dateDisplay = 'Invalid Date';
             try {
@@ -1920,8 +1986,8 @@
             
             let html = `
                 <div class="flex items-start justify-between w-full relative z-10">
-                    <div class="flex items-start gap-3 flex-1 min-w-0 cursor-pointer" onclick="window.toggleNotes('${task.id}')">
-                        <button onclick="event.stopPropagation(); window.toggleTask('${task.id}')" class="mt-0.5 flex-shrink-0 transition-colors ${task.completed ? '' : 'text-gray-500'}">
+                    <div class="flex items-start gap-3 flex-1 min-w-0 cursor-pointer" onclick="toggleNotes('${task.id}')">
+                        <button onclick="event.stopPropagation(); toggleTask('${task.id}')" class="mt-0.5 flex-shrink-0 transition-colors ${task.completed ? '' : 'text-gray-500'}">
                             <i class="far ${checkIcon} text-lg"></i>
                         </button>
                         <div class="flex flex-col min-w-0 w-full">
@@ -1937,8 +2003,8 @@
                         </div>
                     </div>
                     <div class="flex items-center gap-1 pl-2 opacity-0 group-hover/task:opacity-100 transition-opacity">
-                        <button onclick="window.openEditModal('${task.id}')" class="p-1.5 text-gray-500 hover:text-blue-400"><i class="fas fa-edit"></i></button>
-                        <button onclick="window.deleteTask('${task.id}')" class="p-1.5 text-gray-500 hover:text-red-400"><i class="fas fa-trash-alt"></i></button>
+                        <button onclick="openEditModal('${task.id}')" class="p-1.5 text-gray-500 hover:text-blue-400"><i class="fas fa-edit"></i></button>
+                        <button onclick="deleteTask('${task.id}')" class="p-1.5 text-gray-500 hover:text-red-400"><i class="fas fa-trash-alt"></i></button>
                     </div>
                 </div>
             `;
@@ -1948,14 +2014,14 @@
                     <div id="notes-${task.id}" class="hidden mt-3 pt-3 border-t border-white/5 w-full relative z-10">
                          <div class="flex justify-between items-start gap-2">
                             <div class="text-xs text-gray-400 whitespace-pre-wrap pl-8 flex-1">${escapeHtml(task.notes.trim())}</div>
-                            <button onclick="window.copyNote(\`${escapeHtml(task.notes.trim())}\`)" class="text-gray-600 hover:text-white"><i class="far fa-copy text-xs"></i></button>
+                            <button onclick="copyNote(\`${escapeHtml(task.notes.trim())}\`)" class="text-gray-600 hover:text-white"><i class="far fa-copy text-xs"></i></button>
                          </div>
                     </div>
                 `;
             }
             taskEl.innerHTML = html;
             return taskEl;
-        };
+        }
 
         function checkDuplicateEntry() {
             const client = document.getElementById('task-client').value.trim();
@@ -2012,16 +2078,16 @@
         }
 
         document.addEventListener('keydown', (e) => {
-            if ((e.ctrlKey || e.metaKey) && e.key === 'z') { e.preventDefault(); window.undoDelete(); }
+            if ((e.ctrlKey || e.metaKey) && e.key === 'z') { e.preventDefault(); undoDelete(); }
         });
 
-        window.openTaskStatusModal = (id) => { pendingTaskStatusId = id; document.getElementById('task-status-modal').classList.remove('hidden'); };
-        window.closeTaskStatusModal = () => { pendingTaskStatusId = null; document.getElementById('task-status-modal').classList.add('hidden'); };
+        function openTaskStatusModal(id) { pendingTaskStatusId = id; document.getElementById('task-status-modal').classList.remove('hidden'); }
+        function closeTaskStatusModal() { pendingTaskStatusId = null; document.getElementById('task-status-modal').classList.add('hidden'); }
 
-        window.setTaskStatus = (status) => {
+        function setTaskStatus(status) {
             if (!pendingTaskStatusId) return;
             const task = allTasks.find(t => t.id === pendingTaskStatusId);
-            if (!task) return window.closeTaskStatusModal();
+            if (!task) return closeTaskStatusModal();
 
             const nowISO = new Date().toISOString();
             if (status === 'done') {
@@ -2030,19 +2096,19 @@
                 task.completed = false; task.completedAt = undefined; task.ongoingAt = nowISO; showNotification("Task marked as ongoing");
             }
             saveAllDataToLocalAndCloud();
-            window.closeTaskStatusModal();
-        };
+            closeTaskStatusModal();
+        }
 
-        window.toggleTask = (id) => {
+        function toggleTask(id) {
             const task = allTasks.find(t => t.id === id);
             if (!task) return;
             if (task.completed) {
                 task.completed = false; task.completedAt = undefined; task.ongoingAt = undefined; saveAllDataToLocalAndCloud(); return;
             }
-            window.openTaskStatusModal(id);
-        };
+            openTaskStatusModal(id);
+        }
 
-        window.deleteTask = (id) => {
+        function deleteTask(id) {
             const index = allTasks.findIndex(t => t.id === id);
             if (index !== -1) {
                 const deleted = allTasks.splice(index, 1)[0];
@@ -2053,16 +2119,16 @@
                 clearTimeout(undoTimeout);
                 undoTimeout = setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 5000);
             }
-        };
+        }
 
-        window.undoDelete = () => {
+        function undoDelete() {
             const last = deletedTaskStack.pop();
             if (last) {
                 allTasks.push(last); saveAllDataToLocalAndCloud(); document.getElementById('undo-toast').classList.add('translate-y-20', 'opacity-0');
             }
-        };
+        }
 
-        window.clearTaskForm = () => {
+        function clearTaskForm() {
             document.getElementById('task-client').value = '';
             document.getElementById('task-category').value = '';
             document.getElementById('task-notes').value = '';
@@ -2070,7 +2136,7 @@
             document.getElementById('duplicate-warning').classList.add('hidden');
             const btn = document.getElementById('add-task-btn');
             btn.disabled = false; btn.classList.remove('opacity-50', 'cursor-not-allowed');
-        };
+        }
 
         function getWeekBounds(d) {
             const date = new Date(d);
@@ -2146,17 +2212,17 @@
             });
         }
 
-        window.toggleNotes = (id) => {
+        function toggleNotes(id) {
             const el = document.getElementById(`notes-${id}`);
             if(el) { el.classList.toggle('hidden'); document.getElementById(`arrow-${id}`).classList.toggle('rotate-90'); }
-        };
+        }
         
-        window.copyNote = (text) => { navigator.clipboard.writeText(text); showNotification("Note copied!"); };
-        window.applyFilters = () => { refreshCurrentView(); };
-        window.clearFilters = () => {
+        function copyNote(text) { navigator.clipboard.writeText(text); showNotification("Note copied!"); }
+        function applyFilters() { refreshCurrentView(); }
+        function clearFilters() {
             document.getElementById('filter-client').value = ""; document.getElementById('filter-category').value = "";
             document.getElementById('global-search').value = ""; filterDatepicker.clear(); refreshCurrentView();
-        };
+        }
 
         function updateFilterOptions() {
             const cSet = new Set(['Akash Sir', 'DataLogy', 'Holiday Homes', 'JBulls', 'Prime Bullion']);
@@ -2199,11 +2265,11 @@
             }
         }
 
-        window.copySummary = () => {
+        function copySummary() {
             const text = Array.from(document.querySelectorAll('.summary-text')).map(el => el.innerText).join('\n');
             if(!text) return showNotification("Nothing to copy");
             navigator.clipboard.writeText("Today's Task\n" + text).then(()=>showNotification("Copied summary!"));
-        };
+        }
 
         function renderProductivityChart() {
             const days = []; const counts = []; const labels = [];
@@ -2231,7 +2297,7 @@
             else { productivityChart = new ApexCharts(document.querySelector("#task-chart"), options); productivityChart.render(); }
         }
         
-        window.updateChartTimeframe = (tf) => { 
+        function updateChartTimeframe(tf) { 
             currentChartTimeframe = tf; 
             ['week', 'month', 'all'].forEach(id => {
                 const btn = document.getElementById(`btn-${id}`);
@@ -2239,7 +2305,7 @@
                 else btn.className = "px-2 py-0.5 text-[10px] font-medium rounded transition-all text-gray-400 hover:text-white";
             });
             renderProductivityChart(); 
-        };
+        }
 
         function escapeHtml(text) {
             if (!text) return "";
@@ -2285,7 +2351,7 @@
                 });
             });
             saveAllDataToLocalAndCloud();
-            window.clearTaskForm();
+            clearTaskForm();
         });
 
         document.getElementById('edit-form').addEventListener('submit', (e) => {
@@ -2307,11 +2373,11 @@
                      t.isDateless = true;
                 }
                 saveAllDataToLocalAndCloud();
-                window.closeEditModal();
+                closeEditModal();
             }
         });
 
-        window.openEditModal = (id) => {
+        function openEditModal(id) {
             const t = allTasks.find(x => x.id === id);
             if(t) {
                 document.getElementById('edit-task-id').value = id;
@@ -2322,38 +2388,17 @@
                 else editDatepicker.setDate(t.date);
                 document.getElementById('edit-modal').classList.remove('hidden');
             }
-        };
+        }
 
-        window.closeEditModal = () => document.getElementById('edit-modal').classList.add('hidden');
+        function closeEditModal() { document.getElementById('edit-modal').classList.add('hidden'); }
 
         ['task-client', 'task-category', 'task-notes'].forEach(id => document.getElementById(id).addEventListener('input', checkDuplicateEntry));
 
         // --- Firebase Background Sync System ---
-        window.lastSyncError = "Connecting to Firebase...";
-        function setSyncStatus(status, errorMsg = "") {
-            const dot = document.getElementById('sync-dot');
-            const text = document.getElementById('sync-text');
-            if (!dot || !text) return;
-            
-            if (status === 'ok') {
-                dot.className = "w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]";
-                text.innerText = "Cloud Synced";
-                window.lastSyncError = "Successfully connected and synced to Firebase!";
-            } else if (status === 'error') {
-                dot.className = "w-2 h-2 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)]";
-                text.innerText = "Sync Error";
-                window.lastSyncError = "Error: " + errorMsg + "\n\n(Make sure you are using 'Firestore Database' in Firebase Console and your Rules allow read/write)";
-            } else if (status === 'syncing') {
-                dot.className = "w-2 h-2 rounded-full bg-yellow-500 animate-pulse";
-                text.innerText = "Syncing...";
-                window.lastSyncError = "Currently syncing data to cloud...";
-            }
-        }
-
         async function initFirebaseSync() {
             try {
                 setSyncStatus('syncing');
-                // Dynamically import Firebase so we don't break existing JS scope
+                // Using dynamic imports keeps this script globally scoped while loading modular Firebase
                 const { initializeApp } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js");
                 const { getAuth, signInAnonymously, onAuthStateChanged } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js");
                 const { getFirestore, doc, setDoc, onSnapshot } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
@@ -2372,7 +2417,7 @@
                 const db = getFirestore(app);
                 const docRef = doc(db, 'task_manager', 'global_shared_data');
 
-                // Attach push to cloud capability globally
+                // Attach push to cloud capability 
                 window.saveToCloud = async function(timestamp) {
                     if(!db) return;
                     setSyncStatus('syncing');
@@ -2384,7 +2429,7 @@
                             leaves: allLeaves,
                             leaveConfig: leaveConfig,
                             lastUpdated: timestamp || Date.now()
-                        }, { merge: true });
+                        }, { merge: false }); // Merge false ensures deleted tasks on device A get deleted on the cloud
                         setSyncStatus('ok');
                     } catch (e) {
                         console.error("Firebase save error:", e);
@@ -2392,18 +2437,28 @@
                     }
                 };
 
+                isFirebaseReady = true;
+
+                // If user added tasks before Firebase finished loading, push them now!
+                if (pendingCloudSave) {
+                    window.saveToCloud(parseInt(localStorage.getItem('Shubham_last_updated') || Date.now().toString()));
+                    pendingCloudSave = false;
+                }
+
                 await signInAnonymously(auth);
 
                 onAuthStateChanged(auth, (user) => {
                     if (user) {
-                        onSnapshot(docRef, (snapshot) => {
-                            if (snapshot.exists()) {
-                                const data = snapshot.data();
+                        onSnapshot(docRef, (docSnap) => {
+                            if (docSnap.exists()) {
+                                const data = docSnap.data();
                                 const cloudTime = data.lastUpdated || 0;
-                                let _localLastUpdated = parseInt(localStorage.getItem('Shubham_last_updated') || '0');
+                                let localTime = parseInt(localStorage.getItem('Shubham_last_updated') || '0');
 
                                 // Only overwrite local data if the cloud is ACTUALLY newer
-                                if (cloudTime > _localLastUpdated || (_localLastUpdated === 0 && cloudTime > 0)) {
+                                if (cloudTime > localTime) {
+                                    isIncomingSync = true; // Pause our local "save" observer so we don't bounce the sync back
+                                    
                                     allTasks = data.tasks || [];
                                     customHolidays = data.holidays || [];
                                     exceptionDates = data.exceptions || [];
@@ -2419,14 +2474,21 @@
                                     
                                     loadTasks(); // Visually update everything with new data
                                     setSyncStatus('ok');
-                                } else if (_localLastUpdated > cloudTime) {
-                                    window.saveToCloud(_localLastUpdated);
+                                    isIncomingSync = false;
+                                } 
+                                else if (localTime > cloudTime) {
+                                    // Local is newer! Force push to cloud.
+                                    window.saveToCloud(localTime);
                                 } else {
                                     setSyncStatus('ok');
                                 }
                             } else {
-                                // DB empty, initialize it with whatever we have locally
-                                window.saveToCloud(Date.now());
+                                // DB empty! Push local data to establish the database if we have any.
+                                if (allTasks.length > 0 || customHolidays.length > 0 || allLeaves.length > 0) {
+                                    window.saveToCloud(Date.now());
+                                } else {
+                                    setSyncStatus('ok'); // Literally nothing to sync yet
+                                }
                             }
                         }, (error) => {
                             setSyncStatus('error', error.message);
@@ -2444,7 +2506,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             mainDatepicker = flatpickr("#task-date", { mode: "multiple", dateFormat: "Y-m-d", minDate: "today", disableMobile: "true", onChange: checkDuplicateEntry });
             editDatepicker = flatpickr("#edit-date", { dateFormat: "Y-m-d", disableMobile: "true" });
-            filterDatepicker = flatpickr("#filter-date", { dateFormat: "Y-m-d", disableMobile: "true", onChange: window.applyFilters });
+            filterDatepicker = flatpickr("#filter-date", { dateFormat: "Y-m-d", disableMobile: "true", onChange: applyFilters });
             holidayDatepicker = flatpickr("#holiday-date", { mode: "multiple", dateFormat: "Y-m-d", disableMobile: "true" });
             leaveDatepicker = flatpickr("#leave-dates", { mode: "multiple", dateFormat: "Y-m-d", disableMobile: "true" });
             
