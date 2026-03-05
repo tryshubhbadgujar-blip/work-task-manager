@@ -880,18 +880,24 @@
         let userAuth = null;
         let isFirstLoad = true;
 
-        // Using a highly structured path per best practices. Data is placed inside a central `main` document.
-        const appId = 'shubham-task-manager';
+        // Shared global document for all your devices
+        const docRef = doc(db, 'shubham_app', 'shared_data');
 
-        // Initialize Firebase Auth
-        signInAnonymously(auth).catch(err => console.error("Firebase Auth Error:", err));
+        // Initialize Firebase Auth explicitly and await it
+        const initFirebase = async () => {
+            try {
+                await signInAnonymously(auth);
+            } catch (err) {
+                console.error("Firebase Auth Error:", err);
+                window.showNotification("Auth Error - Check Console");
+            }
+        };
+        initFirebase();
 
         // Listen for Auth status & setup Real-time listener
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 userAuth = user;
-                // Reference to the main data document
-                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'appState', 'main');
 
                 // Real-time synchronization
                 onSnapshot(docRef, (snapshot) => {
@@ -922,6 +928,7 @@
                     window.renderLeaveHistory();
                 }, (error) => {
                     console.error("Firestore sync error:", error);
+                    window.showNotification("DB Sync Error! Check Firestore Rules.");
                 });
             }
         });
@@ -929,7 +936,6 @@
         // Replaces ALL localStorage sets
         window.syncDataToFirebase = async function() {
             if (!db || !userAuth) return;
-            const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'appState', 'main');
             try {
                 await setDoc(docRef, {
                     tasks: allTasks,
@@ -940,7 +946,7 @@
                 }, { merge: true });
             } catch (e) {
                 console.error("Error saving to Firebase:", e);
-                window.showNotification("Error syncing data");
+                window.showNotification("Error: Update Firestore Rules!");
             }
         };
 
