@@ -857,15 +857,15 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Global State
-        let allTasks = [];
+        // Global State - INITIALIZED IMMEDIATELY FROM LOCAL STORAGE (Offline-First)
+        let allTasks = JSON.parse(localStorage.getItem('Shubham_tasks_local') || '[]');
+        let customHolidays = JSON.parse(localStorage.getItem('Shubham_holidays') || '[]');
+        let exceptionDates = JSON.parse(localStorage.getItem('Shubham_exceptions') || '[]');
+        let leaveConfig = JSON.parse(localStorage.getItem('Shubham_leave_config') || '{"pl":0, "sl":0, "pl_adj":0, "sl_adj":0}');
+        let allLeaves = JSON.parse(localStorage.getItem('Shubham_leaves') || '[]');
+        
         let deletedTaskStack = [];
         let excludedSummaryIds = new Set();
-        let customHolidays = [];
-        let exceptionDates = [];
-        let leaveConfig = {pl:0, sl:0, pl_adj:0, sl_adj:0};
-        let allLeaves = [];
-
         let mainDatepicker, editDatepicker, filterDatepicker, holidayDatepicker, productivityChart, leaveDatepicker;
         let currentChartTimeframe = 'week';
         let undoTimeout;
@@ -877,13 +877,11 @@
         let currentManagingLeaveId = null;
         let currentManagingLeaveDate = null;
         let pendingTaskStatusId = null;
-        let userAuth = null;
-        let isFirstLoad = true;
 
         // Shared global document for all your devices
         const docRef = doc(db, 'shubham_app', 'shared_data');
 
-        // Initialize Firebase Auth explicitly and await it
+        // Initialize Firebase Auth
         const initFirebase = async () => {
             try {
                 await signInAnonymously(auth);
@@ -897,22 +895,29 @@
         // Listen for Auth status & setup Real-time listener
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                userAuth = user;
-
                 // Real-time synchronization
                 onSnapshot(docRef, (snapshot) => {
                     if (snapshot.exists()) {
+                        // DB has data, overwrite local variables
                         const data = snapshot.data();
                         allTasks = data.tasks || [];
                         customHolidays = data.holidays || [];
                         exceptionDates = data.exceptions || [];
                         allLeaves = data.leaves || [];
                         leaveConfig = data.leaveConfig || {pl:0, sl:0, pl_adj:0, sl_adj:0};
+
+                        // Backup to local storage instantly
+                        localStorage.setItem('Shubham_tasks_local', JSON.stringify(allTasks));
+                        localStorage.setItem('Shubham_holidays', JSON.stringify(customHolidays));
+                        localStorage.setItem('Shubham_exceptions', JSON.stringify(exceptionDates));
+                        localStorage.setItem('Shubham_leaves', JSON.stringify(allLeaves));
+                        localStorage.setItem('Shubham_leave_config', JSON.stringify(leaveConfig));
+                    } else {
+                        // DB is empty! Push our local storage data up to initialize it
+                        window.syncDataToFirebase();
                     }
 
-                    isFirstLoad = false;
-
-                    // Trigger UI updates (Replaces old loadTasks logic)
+                    // Refresh UI with cloud data
                     window.updateFilterOptions();
                     window.refreshCurrentView();
                     window.renderDailySummary();
@@ -928,14 +933,26 @@
                     window.renderLeaveHistory();
                 }, (error) => {
                     console.error("Firestore sync error:", error);
-                    window.showNotification("DB Sync Error! Check Firestore Rules.");
+                    if(error.code === 'permission-denied') {
+                        alert("🔥 FIREBASE ERROR: Permission Denied!\n\nYou must update your Firestore Rules to allow 'read' and 'write'.\nYour data is saved locally but cannot reach the cloud.");
+                    } else {
+                        window.showNotification("DB Sync Error! " + error.message);
+                    }
                 });
             }
         });
 
-        // Replaces ALL localStorage sets
+        // The Ultimate Save Function
         window.syncDataToFirebase = async function() {
-            if (!db || !userAuth) return;
+            // 1. ALWAYS Save locally first so you NEVER lose data on refresh
+            localStorage.setItem('Shubham_tasks_local', JSON.stringify(allTasks));
+            localStorage.setItem('Shubham_holidays', JSON.stringify(customHolidays));
+            localStorage.setItem('Shubham_exceptions', JSON.stringify(exceptionDates));
+            localStorage.setItem('Shubham_leaves', JSON.stringify(allLeaves));
+            localStorage.setItem('Shubham_leave_config', JSON.stringify(leaveConfig));
+
+            // 2. Push to cloud
+            if (!db) return;
             try {
                 await setDoc(docRef, {
                     tasks: allTasks,
@@ -944,9 +961,14 @@
                     leaves: allLeaves,
                     leaveConfig: leaveConfig
                 }, { merge: true });
+                console.log("Successfully synced to Firebase.");
             } catch (e) {
                 console.error("Error saving to Firebase:", e);
-                window.showNotification("Error: Update Firestore Rules!");
+                if(e.code === 'permission-denied') {
+                    alert("🔥 FIREBASE ERROR: Permission Denied!\n\nYou must update your Firestore Rules to allow 'read' and 'write'.\nYour data was saved locally but cannot reach the cloud.");
+                } else {
+                    window.showNotification("Cloud sync failed. Data saved locally.");
+                }
             }
         };
 
@@ -2349,6 +2371,7 @@
 
         ['task-client', 'task-category', 'task-notes'].forEach(id => document.getElementById(id).addEventListener('input', checkDuplicateEntry));
 
+        // Load instantly from localStorage before Firebase connects
         document.addEventListener('DOMContentLoaded', () => {
             mainDatepicker = flatpickr("#task-date", { mode: "multiple", dateFormat: "Y-m-d", minDate: "today", disableMobile: "true", onChange: checkDuplicateEntry });
             editDatepicker = flatpickr("#edit-date", { dateFormat: "Y-m-d", disableMobile: "true" });
@@ -2357,6 +2380,21 @@
             leaveDatepicker = flatpickr("#leave-dates", { mode: "multiple", dateFormat: "Y-m-d", disableMobile: "true" });
             
             document.getElementById('current-date').textContent = new Date().toLocaleDateString(undefined, {weekday:'long', month:'short', day:'numeric'});
+            
+            // Initial Render from LocalStorage so UI never blanks out
+            window.updateFilterOptions();
+            window.refreshCurrentView();
+            window.renderDailySummary();
+            window.renderProductivityChart();
+            window.renderMiniCalendar();
+            window.updateFooterStats();
+
+            document.getElementById('quota-pl').value = leaveConfig.pl;
+            document.getElementById('quota-sl').value = leaveConfig.sl;
+            document.getElementById('adj-pl').value = leaveConfig.pl_adj || 0;
+            document.getElementById('adj-sl').value = leaveConfig.sl_adj || 0;
+            window.renderLeaveStats();
+            window.renderLeaveHistory();
         });
     </script>
 </body>
