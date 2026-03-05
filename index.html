@@ -545,6 +545,12 @@
                 </nav>
 
                 <div id="current-date" class="hidden sm:block text-[10px] font-mono font-medium text-gray-400 bg-white/5 px-2 py-1 rounded border border-white/5"></div>
+
+                <!-- Cloud Sync Indicator (NEW) -->
+                <div id="sync-status" class="hidden sm:flex items-center gap-2 text-[10px] font-mono font-medium text-gray-400 bg-white/5 px-2 py-1 rounded border border-white/5 cursor-pointer hover:bg-white/10 transition-colors" onclick="alert(window.lastSyncError || 'Connected to cloud!')" title="Click for sync details">
+                    <span id="sync-dot" class="w-2 h-2 rounded-full bg-gray-500"></span>
+                    <span id="sync-text">Connecting...</span>
+                </div>
             </div>
 
             <!-- Global Search -->
@@ -863,6 +869,7 @@
         let exceptionDates = JSON.parse(localStorage.getItem('Shubham_exceptions') || '[]');
         let leaveConfig = JSON.parse(localStorage.getItem('Shubham_leave_config') || '{"pl":0, "sl":0, "pl_adj":0, "sl_adj":0}');
         let allLeaves = JSON.parse(localStorage.getItem('Shubham_leaves') || '[]');
+        let localLastUpdated = parseInt(localStorage.getItem('Shubham_last_updated') || '0');
         
         let deletedTaskStack = [];
         let excludedSummaryIds = new Set();
@@ -878,16 +885,40 @@
         let currentManagingLeaveDate = null;
         let pendingTaskStatusId = null;
 
+        // UI Sync Indicator Logic
+        window.lastSyncError = "Connecting to Firebase...";
+        function setSyncStatus(status, errorMsg = "") {
+            const dot = document.getElementById('sync-dot');
+            const text = document.getElementById('sync-text');
+            if (!dot || !text) return;
+            
+            if (status === 'ok') {
+                dot.className = "w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]";
+                text.innerText = "Cloud Synced";
+                window.lastSyncError = "Successfully connected and synced to Firebase!";
+            } else if (status === 'error') {
+                dot.className = "w-2 h-2 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)]";
+                text.innerText = "Sync Error";
+                window.lastSyncError = "Error: " + errorMsg + "\n\n(Make sure you are using 'Firestore Database' and your Rules allow read/write)";
+            } else if (status === 'syncing') {
+                dot.className = "w-2 h-2 rounded-full bg-yellow-500 animate-pulse";
+                text.innerText = "Syncing...";
+                window.lastSyncError = "Currently syncing data to cloud...";
+            }
+        }
+
         // Shared global document for all your devices
-        const docRef = doc(db, 'shubham_app', 'shared_data');
+        const docRef = doc(db, 'task_manager', 'global_shared_data');
 
         // Initialize Firebase Auth
         const initFirebase = async () => {
+            setSyncStatus('syncing');
             try {
                 await signInAnonymously(auth);
             } catch (err) {
                 console.error("Firebase Auth Error:", err);
-                window.showNotification("Auth Error - Check Console");
+                setSyncStatus('error', err.message);
+                window.showNotification("Auth Error - Click Sync Status");
             }
         };
         initFirebase();
@@ -898,26 +929,41 @@
                 // Real-time synchronization
                 onSnapshot(docRef, (snapshot) => {
                     if (snapshot.exists()) {
-                        // DB has data, overwrite local variables
                         const data = snapshot.data();
-                        allTasks = data.tasks || [];
-                        customHolidays = data.holidays || [];
-                        exceptionDates = data.exceptions || [];
-                        allLeaves = data.leaves || [];
-                        leaveConfig = data.leaveConfig || {pl:0, sl:0, pl_adj:0, sl_adj:0};
+                        const cloudTime = data.lastUpdated || 0;
+                        
+                        // TIMESTAMP COMPARISON: Only overwrite local data if the cloud is ACTUALLY newer, 
+                        // or if this is a brand new device syncing for the first time.
+                        if (cloudTime > localLastUpdated || (localLastUpdated === 0 && cloudTime > 0)) {
+                            allTasks = data.tasks || [];
+                            customHolidays = data.holidays || [];
+                            exceptionDates = data.exceptions || [];
+                            allLeaves = data.leaves || [];
+                            leaveConfig = data.leaveConfig || {pl:0, sl:0, pl_adj:0, sl_adj:0};
 
-                        // Backup to local storage instantly
-                        localStorage.setItem('Shubham_tasks_local', JSON.stringify(allTasks));
-                        localStorage.setItem('Shubham_holidays', JSON.stringify(customHolidays));
-                        localStorage.setItem('Shubham_exceptions', JSON.stringify(exceptionDates));
-                        localStorage.setItem('Shubham_leaves', JSON.stringify(allLeaves));
-                        localStorage.setItem('Shubham_leave_config', JSON.stringify(leaveConfig));
+                            // Update Local Storage & Sync Times
+                            localLastUpdated = cloudTime;
+                            localStorage.setItem('Shubham_last_updated', localLastUpdated.toString());
+                            localStorage.setItem('Shubham_tasks_local', JSON.stringify(allTasks));
+                            localStorage.setItem('Shubham_holidays', JSON.stringify(customHolidays));
+                            localStorage.setItem('Shubham_exceptions', JSON.stringify(exceptionDates));
+                            localStorage.setItem('Shubham_leaves', JSON.stringify(allLeaves));
+                            localStorage.setItem('Shubham_leave_config', JSON.stringify(leaveConfig));
+                        } else if (localLastUpdated > cloudTime) {
+                            // Our local data is newer (maybe we saved while offline). Push to cloud.
+                            window.syncDataToFirebase();
+                            return; // `syncDataToFirebase` will trigger UI updates
+                        }
                     } else {
-                        // DB is empty! Push our local storage data up to initialize it
-                        window.syncDataToFirebase();
+                        // DB is COMPLETELY empty. Push our local data if we have any to initialize it.
+                        if (localLastUpdated > 0 || allTasks.length > 0) {
+                            window.syncDataToFirebase();
+                        }
                     }
 
-                    // Refresh UI with cloud data
+                    setSyncStatus('ok');
+
+                    // Refresh UI with synced data
                     window.updateFilterOptions();
                     window.refreshCurrentView();
                     window.renderDailySummary();
@@ -933,18 +979,18 @@
                     window.renderLeaveHistory();
                 }, (error) => {
                     console.error("Firestore sync error:", error);
-                    if(error.code === 'permission-denied') {
-                        alert("🔥 FIREBASE ERROR: Permission Denied!\n\nYou must update your Firestore Rules to allow 'read' and 'write'.\nYour data is saved locally but cannot reach the cloud.");
-                    } else {
-                        window.showNotification("DB Sync Error! " + error.message);
-                    }
+                    setSyncStatus('error', error.message);
                 });
             }
         });
 
         // The Ultimate Save Function
         window.syncDataToFirebase = async function() {
-            // 1. ALWAYS Save locally first so you NEVER lose data on refresh
+            const now = Date.now();
+            localLastUpdated = now;
+
+            // 1. ALWAYS Save locally first with Timestamp
+            localStorage.setItem('Shubham_last_updated', now.toString());
             localStorage.setItem('Shubham_tasks_local', JSON.stringify(allTasks));
             localStorage.setItem('Shubham_holidays', JSON.stringify(customHolidays));
             localStorage.setItem('Shubham_exceptions', JSON.stringify(exceptionDates));
@@ -953,22 +999,20 @@
 
             // 2. Push to cloud
             if (!db) return;
+            setSyncStatus('syncing');
             try {
                 await setDoc(docRef, {
                     tasks: allTasks,
                     holidays: customHolidays,
                     exceptions: exceptionDates,
                     leaves: allLeaves,
-                    leaveConfig: leaveConfig
+                    leaveConfig: leaveConfig,
+                    lastUpdated: now
                 }, { merge: true });
-                console.log("Successfully synced to Firebase.");
+                setSyncStatus('ok');
             } catch (e) {
                 console.error("Error saving to Firebase:", e);
-                if(e.code === 'permission-denied') {
-                    alert("🔥 FIREBASE ERROR: Permission Denied!\n\nYou must update your Firestore Rules to allow 'read' and 'write'.\nYour data was saved locally but cannot reach the cloud.");
-                } else {
-                    window.showNotification("Cloud sync failed. Data saved locally.");
-                }
+                setSyncStatus('error', e.message);
             }
         };
 
